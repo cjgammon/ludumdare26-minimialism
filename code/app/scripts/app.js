@@ -4,6 +4,7 @@ define(['game/Background',
         'game/HeroAI',
         'game/Fireball',
         'game/UI',
+        'game/BoidSwarm',
         'game/events/UserEvent',
         'game/screens/TitleScreen',
         'game/AssetLoader'], 
@@ -14,6 +15,7 @@ define(['game/Background',
             AI,
             Fireball,
             UI,
+            BoidSwarm,
             UserEvent,
             TitleScreen,
             AssetLoader) {
@@ -77,41 +79,14 @@ define(['game/Background',
             bg = new Background();
             stage.addChild(bg);
 
-            enemy = new Enemy();
-            stage.addChild(enemy);
-
+            swarm = new BoidSwarm(stage);
+            
             ui = new UI();
             stage.addChild(ui);
-            
-            HERO_TIMEOUT = setTimeout(instance.startGame, WAIT_FOR_HERO);
-
-            UserEvent.FIREBALL.add(instance.handle_FIREBALL);
-        },
-
-        startGame: function () {
-            hero = new Hero();
-            stage.addChild(hero);
-
-            ai = new AI(hero, enemy, instance);
-            ai.start();
-
-            ui.trackingScore = false;
         },
 
         tick: function () {
             stage.update();
-            instance.updateFireballs();
-        },
-
-        updateFireballs: function () {
-            var i = 0;
-            
-            for (i; i < fireballs.length; i += 1) {
-                if (fireballs[i].x + 100 < 0 || fireballs[i].x - 100 > stage.canvas.width) {
-                    stage.removeChild(fireballs[i]);
-                    fireballs.splice(i, 1);
-                }
-            }
         },
 
         handle_KEY_DOWN: function (e) {
@@ -124,31 +99,11 @@ define(['game/Background',
 
         handle_KEY_UP: function (e) {
             UserEvent.KEY_UP.dispatch(e);
-        },
+        }
 
-        handle_FIREBALL: function () {
-            var fireball,
-                direction;
-            
-            direction = enemy.getDirection();
-            fireball = new Fireball(direction);
-            fireball.x = direction > 0 ? enemy.x + 80 : enemy.x - 30;
-            fireball.y = enemy.y + 20;
-            fireball.init();
-            stage.addChild(fireball);
-
-            fireballs.push(fireball);
-            
-            SoundJS.play('FireballSFX', SoundJS.INTERRUPT_ANY, 0, 0, 0, 0.5); 
-        },
-        
         /**
          * GETTERS
          */
-
-        getFireballs: function () {
-            return fireballs;
-        }
     }
 
     return new App();

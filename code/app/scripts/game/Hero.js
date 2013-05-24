@@ -21,26 +21,6 @@ define(['game/AssetLoader',
     var Hero = function () {
         instance = this;
       
-        function duck() {
-            ducking = true;
-            animation.gotoAndPlay('duck');
-        }
-
-        function unduck() {
-            ducking = false;
-            animation.gotoAndStop('stop');
-
-            if (onFloor()) {
-                jumping = true;
-                animation.gotoAndPlay('jump');
-                vx = vx > 0 ? -2 : 2;
-            }
-        }
-
-        function onFloor() {
-            return instance.y == _FLOOR_Y;
-        }
-
         /**
          * initialize
          */
@@ -103,29 +83,6 @@ define(['game/AssetLoader',
             }
         }
 
-        instance.wait = function () {
-            vx = 0;
-            animation.gotoAndStop('stop');
-        }
-
-        instance.unduck = function () {
-            unduck();
-        }
-
-        instance.duck = function () {
-            if (!ducking && onFloor()) {
-                duck();
-            }
-        }
-
-        instance.jump = function () {
-            if (onFloor()) {
-                SoundJS.play('JumpSFX', SoundJS.INTERRUPT_ANY, 0, 0, 0, 0.5); 
-                animation.gotoAndPlay('jump');
-                jumping = true;
-            }
-        }
-
         instance.moveRight = function () {
             vx = ducking ? _SHELL_SPEED : _WALK_SPEED;
             animation.scaleX = 1;
@@ -143,54 +100,33 @@ define(['game/AssetLoader',
         /**
          * handle keydown input
          */
-        /*
         instance.handle_KEY_DOWN = function (e) {
             switch(e.keyCode) {
             case 37: //left
-                vx = ducking ? -_SHELL_SPEED : -_WALK_SPEED;
-                animation.scaleX = -1;
-                animation.x = _WIDTH;
                 break;
             case 39: //right
-                vx = ducking ? _SHELL_SPEED : _WALK_SPEED;
-                animation.scaleX = 1;
-                animation.x = 0;
                 break;
             case 38: //jump
-                if (onFloor()) {
-                    animation.gotoAndPlay('jump');
-                    jumping = true;
-                }
+                
                 break;
             case 40: //duck
-                if (!ducking && onFloor()) {
-                    duck();
-                }
+                
                 break;
             case 32: //fire
-                if (!ducking && onFloor() && !shooting) {
-                    fireball();
-                }
+                
                 break;
             }
         }
-        */
 
         /**
          * key up event
          */
-        /*
         instance.handle_KEY_UP = function (e) {
             switch(e.keyCode) {
             case 40:
                 unduck();
                 break;
             }
-        }
-        */
-
-        instance.getDirection = function () {
-            return animation.scaleX;
         }
 
         instance.init();
